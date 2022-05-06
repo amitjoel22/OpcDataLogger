@@ -40,8 +40,16 @@ namespace OpcDataLogger.Models
 
         private void GetSensors()
         {
-            var xDoc = _repo.GetXml();
-            _sensors = xDoc.Descendants(tagElementName).Select(t => _sensorFactory.CreateInstance(t)).ToDictionary(s => Convert.ToInt32(s.ItemIdentifier.ClientHandle), s => s);
+            try
+            {
+                //var xDoc = _repo.GetXml();
+                //_sensors = xDoc.Descendants(tagElementName).Select(t => _sensorFactory.CreateInstance(t)).ToDictionary(s => Convert.ToInt32(s.ItemIdentifier.ClientHandle), s => s);
+                _sensors = new Dictionary<int, ISensor>();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private void SubscribeToEvents()
@@ -69,18 +77,18 @@ namespace OpcDataLogger.Models
 
         public void Disconnect()
         {
-            _server.Disconnect();
+            _server?.Disconnect();
             LogManager.Shutdown();
         }
 
         public void Subscribe()
         {
             var items = _sensors.Values.Select(s => s.ItemIdentifier).ToArray();
-            _server.Subscribe(_clientSubscription, true, _updateRate, ref items, out int _, out _serverSubscription);
+            _server?.Subscribe(_clientSubscription, true, _updateRate, ref items, out int _, out _serverSubscription);
         }
 
         public void SubscriptionModify(bool active) =>
-            _server.SubscriptionModify(_serverSubscription, active);
+            _server?.SubscriptionModify(_serverSubscription, active);
 
         private void Server_DataChanged(object sender, ServerDataChangedEventArgs e)
         {

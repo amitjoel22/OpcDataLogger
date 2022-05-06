@@ -16,11 +16,11 @@ namespace OpcDataLogger.Models.Factories
             var valueAttribute = xElement.Attribute(valueAttributeName);
             var type = DefineConditionType(xElement.Attribute(typeAttributeName));
 
-            return null == valueAttribute ? CreateInternal(type, null) : CreateInternal(type, Convert.ToDouble(valueAttribute.Value));
+            return (ICondition)Activator.CreateInstance(type, ConvertInternal(valueAttribute));
         }
 
-        private static ICondition CreateInternal(Type type, params object[] args) =>
-            (ICondition)Activator.CreateInstance(type, args);
+        private object ConvertInternal(XAttribute xAttribute) =>
+            null == xAttribute ? null : (object)Convert.ToDouble(xAttribute.Value);
 
         private static Type DefineConditionType(XAttribute typeAttribute) =>
             Type.GetType(conditionType.Replace(classNamePlaceholder, typeAttribute.Value));
