@@ -14,15 +14,15 @@ namespace OpcDataLogger.Models.Factories
         public ICondition CreateInstance(XElement xElement)
         {
             var valueAttribute = xElement.Attribute(valueAttributeName);
-            var type = DefineConditionType(xElement.Attribute(typeAttributeName));
+            var type = GetConditionType(xElement.Attribute(typeAttributeName));
 
             return (ICondition)Activator.CreateInstance(type, ConvertInternal(valueAttribute));
         }
 
         private object[] ConvertInternal(XAttribute valueAttribute) =>
-            null == valueAttribute ? Array.Empty<object>() : new object[] { Convert.ToDouble(valueAttribute.Value) };
+            null == valueAttribute ? null : new object[] { Convert.ToDouble(valueAttribute.Value) };
 
-        private static Type DefineConditionType(XAttribute typeAttribute) =>
+        private static Type GetConditionType(XAttribute typeAttribute) =>
             Type.GetType(conditionType.Replace(classNamePlaceholder, typeAttribute.Value));
     }
 }
