@@ -19,8 +19,8 @@ namespace OpcDataLogger.Models.Factories
             return (ICondition)Activator.CreateInstance(type, ConvertInternal(valueAttribute));
         }
 
-        private object ConvertInternal(XAttribute xAttribute) =>
-            null == xAttribute ? null : (object)Convert.ToDouble(xAttribute.Value);
+        private object[] ConvertInternal(XAttribute valueAttribute) =>
+            null == valueAttribute ? Array.Empty<object>() : new object[] { Convert.ToDouble(valueAttribute.Value) };
 
         private static Type DefineConditionType(XAttribute typeAttribute) =>
             Type.GetType(conditionType.Replace(classNamePlaceholder, typeAttribute.Value));
